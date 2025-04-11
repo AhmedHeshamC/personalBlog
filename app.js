@@ -22,8 +22,8 @@ try {
     app.set('view engine', 'ejs');
     app.set('views', path.join(__dirname, 'views'));
 
-    const ADMIN_USER = 'admin';
-    const ADMIN_PASS = 'password123'; // Change as needed
+    const ADMIN_USER = process.env.ADMIN_USER || 'admin';
+    const ADMIN_PASS = process.env.ADMIN_PASS || 'password123'; // Use env vars in production
 
     // Session and body parser middleware
     app.use(bodyParser.urlencoded({ extended: false }));
@@ -41,18 +41,38 @@ try {
         res.redirect('/login');
     }
 
+    // Helper to sanitize file/ID input
+    function sanitizeId(id) {
+        return /^[a-zA-Z0-9_-]+$/.test(id) ? id : null;
+    }
+
     // Login routes
     app.get('/login', (req, res) => {
+        if (req.session && req.session.authenticated) {
+            return res.redirect('/admin/dashboard');
+        }
         res.render('login', { error: null });
     });
 
     app.post('/login', (req, res) => {
         const { username, password } = req.body;
-        if (username === ADMIN_USER && password === ADMIN_PASS) {
-            req.session.authenticated = true;
-            return res.redirect('/admin/dashboard');
+        if (
+            typeof username === 'string' &&
+            typeof password === 'string' &&
+            username === ADMIN_USER &&
+            password === ADMIN_PASS
+        ) {
+            req.session.regenerate((err) => {
+                if (err) {
+                    console.error('Session regeneration error:', err);
+                    return res.render('login', { error: 'Session error' });
+                }
+                req.session.authenticated = true;
+                res.redirect('/admin/dashboard');
+            });
+        } else {
+            res.render('login', { error: 'Invalid credentials' });
         }
-        res.render('login', { error: 'Invalid credentials' });
     });
 
     app.get('/logout', (req, res) => {
@@ -95,7 +115,9 @@ try {
     
     // Article Page: Show single article
     app.get('/article/:id', (req, res) => {
-        const filePath = path.join(ARTICLES_DIR, req.params.id + '.json');
+        const safeId = sanitizeId(req.params.id);
+        if (!safeId) return res.status(400).send('Invalid article ID');
+        const filePath = path.join(ARTICLES_DIR, safeId + '.json');
         if (!fs.existsSync(filePath)) return res.status(404).send('Article not found');
         
         try {
@@ -159,19 +181,23 @@ try {
 
     // Edit Article
     app.get('/admin/edit/:id', requireAuth, (req, res) => {
-        const filePath = path.join(ARTICLES_DIR, req.params.id + '.json');
+        const safeId = sanitizeId(req.params.id);
+        if (!safeId) return res.status(400).send('Invalid article ID');
+        const filePath = path.join(ARTICLES_DIR, safeId + '.json');
         if (!fs.existsSync(filePath)) return res.status(404).send('Article not found');
         const data = fs.readFileSync(filePath, 'utf-8');
         const article = JSON.parse(data);
-        res.render('edit', { article, id: req.params.id, error: null });
+        res.render('edit', { article, id: safeId, error: null });
     });
 
     app.post('/admin/edit/:id', requireAuth, (req, res) => {
         const { title, content, date } = req.body;
+        const safeId = sanitizeId(req.params.id);
+        if (!safeId) return res.status(400).send('Invalid article ID');
         if (!title || !content || !date) {
-            return res.render('edit', { article: { title, content, date }, id: req.params.id, error: 'All fields are required' });
+            return res.render('edit', { article: { title, content, date }, id: safeId, error: 'All fields are required' });
         }
-        const filePath = path.join(ARTICLES_DIR, req.params.id + '.json');
+        const filePath = path.join(ARTICLES_DIR, safeId + '.json');
         if (!fs.existsSync(filePath)) return res.status(404).send('Article not found');
         const article = { title, content, date };
         fs.writeFile(filePath, JSON.stringify(article, null, 4), err => {
@@ -182,7 +208,9 @@ try {
 
     // Delete Article
     app.post('/admin/delete/:id', requireAuth, (req, res) => {
-        const filePath = path.join(ARTICLES_DIR, req.params.id + '.json');
+        const safeId = sanitizeId(req.params.id);
+        if (!safeId) return res.status(400).send('Invalid article ID');
+        const filePath = path.join(ARTICLES_DIR, safeId + '.json');
         if (!fs.existsSync(filePath)) return res.status(404).send('Article not found');
         fs.unlink(filePath, err => {
             if (err) return res.status(500).send('Error deleting article');
@@ -203,6 +231,17 @@ try {
     } catch (err) {
         console.error('Failed to start server:', err);
     }
+
+    // Session cookie security
+    app.use((req, res, next) => {
+        if (req.session) {
+            req.session.cookie.httpOnly = true;
+            req.session.cookie.sameSite = 'lax';
+            // Uncomment for HTTPS:
+            // req.session.cookie.secure = true;
+        }
+        next();
+    });
 } catch (err) {
     console.error('Fatal application error:', err);
 }
