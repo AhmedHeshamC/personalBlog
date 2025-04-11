@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add Article - My Blog</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f7f7f7; }
+        .container { max-width: 600px; margin: 40px auto; background: #fff; padding: 32px 40px 40px 40px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.07);}
+        h1 { text-align: center; color: #333; margin-bottom: 32px; }
+        .error { color: #c00; margin-bottom: 18px; text-align: center; }
+        label { display: block; margin-top: 18px; }
+        input[type="text"], textarea, input[type="date"] { width: 100%; padding: 10px; margin-top: 6px; border: 1px solid #ccc; border-radius: 4px; }
+        textarea { min-height: 120px; }
+        button { margin-top: 24px; width: 100%; padding: 12px; background: #1976d2; color: #fff; border: none; border-radius: 4px; font-size: 1.1em; cursor: pointer; }
+        button:hover { background: #125ea6; }
+        .back { display: block; margin-top: 18px; text-align: center; color: #1976d2; }
+        .back:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Add Article</h1>
+        <% if (error) { %>
+            <div class="error"><%= error %></div>
+        <% } %>
+        <form method="POST" action="/admin/add">
+            <label for="title">Title</label>
+            <input type="text" name="title" id="title" required>
+            <label for="content">Content</label>
+            <textarea name="content" id="content" required></textarea>
+            <label for="date">Date</label>
+            <input type="date" name="date" id="date" required>
+            <button type="submit">Add Article</button>
+        </form>
+        <a href="/admin/dashboard" class="back">&#8592; Back to Dashboard</a>
+    </div>
+</body>
+</html>

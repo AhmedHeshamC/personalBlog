@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title><%= article.title %> - My Blog</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f7f7f7;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 700px;
+            margin: 40px auto;
+            background: #fff;
+            padding: 32px 40px 40px 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .date {
+            color: #888;
+            font-size: 0.98em;
+            margin-bottom: 24px;
+            display: block;
+        }
+        .content {
+            font-size: 1.13em;
+            color: #222;
+            line-height: 1.7;
+            margin-bottom: 32px;
+        }
+        a {
+            color: #1976d2;
+            text-decoration: none;
+            font-size: 1em;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1><%= article.title %></h1>
+        <span class="date">Published on <%= article.date %></span>
+        <div class="content">
+            <p><%= article.content %></p>
+        </div>
+        <a href="/">&#8592; Back to Home</a>
+    </div>
+</body>
+</html>

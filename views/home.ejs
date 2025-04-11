@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Blog - Home</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f7f7f7;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 700px;
+            margin: 40px auto;
+            background: #fff;
+            padding: 32px 40px 40px 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 32px;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+        li {
+            margin-bottom: 18px;
+            padding: 16px;
+            border-bottom: 1px solid #eee;
+            transition: background 0.2s;
+        }
+        li:last-child {
+            border-bottom: none;
+        }
+        a {
+            text-decoration: none;
+            color: #1976d2;
+            font-size: 1.15em;
+            font-weight: bold;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .date {
+            color: #888;
+            font-size: 0.95em;
+            margin-left: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Articles</h1>
+        <ul>
+            <% articles.forEach(article => { %>
+                <li>
+                    <a href="/article/<%= article.id %>"><%= article.title %></a>
+                    <span class="date"><%= article.date %></span>
+                </li>
+            <% }) %>
+        </ul>
+    </div>
+</body>
+</html>

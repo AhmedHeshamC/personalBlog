@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Dashboard - My Blog</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f7f7f7; }
+        .container { max-width: 800px; margin: 40px auto; background: #fff; padding: 32px 40px 40px 40px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.07);}
+        h1 { text-align: center; color: #333; margin-bottom: 32px; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 12px 8px; border-bottom: 1px solid #eee; text-align: left; }
+        th { background: #f0f0f0; }
+        tr:last-child td { border-bottom: none; }
+        a, button { color: #1976d2; text-decoration: none; font-weight: bold; background: none; border: none; cursor: pointer; }
+        a:hover, button:hover { text-decoration: underline; }
+        .actions { white-space: nowrap; }
+        .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+        .logout { color: #c00; font-weight: normal; }
+        .add-btn { background: #1976d2; color: #fff; padding: 8px 18px; border-radius: 4px; font-size: 1em; }
+        .add-btn:hover { background: #125ea6; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="top-bar">
+            <a href="/admin/add" class="add-btn">+ Add Article</a>
+            <a href="/logout" class="logout">Logout</a>
+        </div>
+        <h1>Admin Dashboard</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Date</th>
+                    <th class="actions">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% articles.forEach(article => { %>
+                    <tr>
+                        <td><%= article.title %></td>
+                        <td><%= article.date %></td>
+                        <td class="actions">
+                            <a href="/admin/edit/<%= article.id %>">Edit</a>
+                            <form method="POST" action="/admin/delete/<%= article.id %>" style="display:inline;" onsubmit="return confirm('Delete this article?');">
+                                <button type="submit">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                <% }) %>
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
