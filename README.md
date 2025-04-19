@@ -35,13 +35,20 @@ Features guest and admin sections, filesystem-based article storage, and basic s
 
 ---
 
-## License
-This project is licensed under the MIT License. Feel free to use and modify it as you wish.
-
-## Author
-Ahmed Hesham
-
-## Acknowledgements
-- Thanks to the open-source community for their contributions and support.
-- Special thanks to the creators of Node.js, Express, and EJS for their amazing frameworks.
+## Project URLs
 - https://roadmap.sh/projects/personal-blog
+
+---
+
+## 🤝 Contributing
+
+1. Fork the repo
+2. Create feature branch
+3. Write tests
+4. Submit a PR
+
+Please adhere to the existing code style and coverage requirements.
+
+---
+
+© 2025 Ahmed Hesham. MIT License.
